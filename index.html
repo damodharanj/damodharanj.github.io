@@ -7,14 +7,35 @@
   <title>The Unusual Web</title>
   <style type="text/css">
   	* {
-  		font-family: "Menlo, monospace"
+  		font-family: Menlo, monospace;
+  	}
+  	.root {
+  		display: flex;
+  	}
+  	.root > div {
+  		width: 50%;
+  		flex-direction: column;
   	}
   </style>
 </head>
 <body>
   <h1>Welcome to the unusual web!</h1>
   <p>Asymptote always strives to become the most perfect value, and stays alive infinitely!</p>
-  <div id="demo"></div>
+  <div class="root">
+  	<div id="demo"></div>
+	<div>
+		<p>
+		Trying to be an asymptote in web using,
+		<ul>
+			<li><a href="#">Parallelism</a></li>
+			<li><a href="#">Machine Learning</a></li>
+			<li><a href="#">Web VR</a></li>
+			<li><a href="#">Web Assembly</a></li>
+		</ul>
+		Lets us converge into horizon of the web with cutting edge technologies and active experiments!
+		</p>
+	</div>
+  </div>
 </body>
 <script type="text/javascript">
 	functionPlot({
