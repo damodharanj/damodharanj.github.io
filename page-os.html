@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Page OS">
+    <link rel="icon" sizes="192x192" href="">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Page OS">
+    <link rel="apple-touch-icon" href="">
+    <meta name="theme-color" content="#9fa2a3">
+	<title>The Page OS</title>
+	<style type="text/css">
+		html, body, div, span, applet, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		a, abbr, acronym, address, big, cite, code,
+		del, dfn, em, img, ins, kbd, q, s, samp,
+		small, strike, strong, sub, sup, tt, var,
+		b, u, i, center,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, embed, 
+		figure, figcaption, footer, header, hgroup, 
+		menu, nav, output, ruby, section, summary,
+		time, mark, audio, video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+			font-family: 'Roboto Mono', monospace;
+		}
+		/* HTML5 display-role reset for older browsers */
+		article, aside, details, figcaption, figure, 
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		blockquote, q {
+			quotes: none;
+		}
+		blockquote:before, blockquote:after,
+		q:before, q:after {
+			content: '';
+			content: none;
+		}
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+		h1 {
+			/*font-size: 2em;*/
+		}
+	</style>
+	<style type="text/css">
+		body {
+			background-color: black;
+		}
+		h1 {
+			font-weight: bolder;
+			font-size: 20px;
+		}
+		.flexer {
+			padding: 10px;
+		    display: flex;
+		    flex-direction: column;
+		    justify-content: space-around;
+		    /*font-size: 1.5em*/
+		}
+		.container {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			grid-auto-rows: minmax(200px, auto);
+			grid-row-gap: 0.2em;
+			grid-column-gap: 0.2em;
+			box-sizing: border-box;
+			margin: 10px;
+		}
+		.left-radius {
+			border-radius: 50px 50px;
+		}
+		.right-radius {
+			border-radius: 150px 50px;	
+		}
+		.item {
+			background-color: gray;
+		}
+
+		#item1 {
+			grid-column: 1/4;
+			grid-row: 1/3;
+			background-color: #F44336;
+			color: #FFF0A5;
+			font-size: 1.5em;
+			/*border-top-left-radius: 50px;*/
+		}
+		#item2 {
+			grid-column: 4/5;
+			background-color: #03A9F4;
+			border-top-right-radius: 50px;
+			/*font-size: 1.5em;*/
+			color: #004666;
+		}
+		#item3 {
+			grid-column: 4/5;	
+			grid-row: 2/4;
+			background-color: #009688;
+			/*font-size: 2em;*/
+			color: #00322d;
+		}
+		#item4 {
+			grid-column: 1/4;
+			background-color: #795548;
+			color: #261915;
+		}
+		#item5 {
+			grid-column: 1/5;
+			background-color: #FFC107;
+    		color: #554104;
+		}
+		#item6 {
+			grid-column: 1/3;
+			background-color: #607D8B;
+		}
+		#item7 {
+			grid-column: 3/5;
+		}
+
+		@media screen and (min-width: 700px)  {
+			#item1 {
+				font-size: 1.5em;
+			}
+			#item2, #item3, #item4, #item5, #item6, #item7 {
+				font-size: 1.3em;	
+			}
+			#item4 {
+				grid-column: 1/2;
+			}
+			
+			#item5 {
+				grid-column: 2/4;
+			}
+
+			.item > h1 {
+				font-size: 1.5em;	
+			}
+
+			.item:hover {
+				transform: rotate3d(0,0,0,30deg);
+			}
+			.container {
+				grid-auto-rows: minmax(180px, auto);	
+			}
+		}
+
+
+	</style>
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<div id="item1" class="flexer item">
+			<h1>Welcome to Page OS!</h1>
+			<p>
+				Here you can witness various experiments and features possible on a web page based on HTML, CSS, Javascript and Web assembly.
+				Feel free to suggest new experiments and also you give me a pull request on <a href="">Github</a>.
+			</p>
+		</div>
+		<div id="item2" class="flexer item">
+			<h1>Compass</h1>
+			<p>Makes use of orientation JS api to implement a compass</p>
+		</div>
+		<div id="item3" class="flexer item">
+			<h1>Web Assembly</h1>
+			<p>
+				Makes use of tomorrow's web technology today. Exploits the speed of compliled language C to enhance the speed.
+			</p>
+		</div>
+		<div id="item4" class="flexer item">
+			<h1>Web VR</h1>
+			<p>
+				With increasing trend in VR and AR tech, this part explores VR using Mozilla's A-Frame library.
+			</p>
+		</div>
+		<div id="item5" class="flexer item">
+			<h1>Parellel Processing</h1>
+			<p>Makes use of web worker to process each image in parallel. Each asynchrnous action can be handled in a separate thread.</p>
+		</div>
+		<div id="item6" class="flexer item">
+			<h1>CSS Grids</h1>
+			<p>Voila! This very page makes use of CSS Grids to align the items. Check out the source code and give me your suggestions</p>
+		</div>
+		<div id="item7" class="flexer item">
+			<h1>About</h1>
+			<p>Hi! I am vertex. I like experimenting on various front end web technologies. I would like Page OS to be the pureset form of various experiemtns of various new standards being introduced to web. Thanks!</p>
+		</div>
+	</div>
+</body>
+</html>
