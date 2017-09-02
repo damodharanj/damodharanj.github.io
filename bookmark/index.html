@@ -6,5 +6,25 @@
 <body>
 <a href="http://bl.ocks.org/damodharanj/c4030d8546771901f8f68c8413c46ba4">Drag and Drop</a>
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint">Element from point</a>
+<h1>Path To AI</h1>
+<h3>Perceptron</h3>
+The smallest unit of neural network, that can classify a n-ary classifier. Provided the problem is linearly separable.
+This is done by adjusting weights of the lines that have to be drawn, along with a biasing. The rate at which you change things affect the
+learning as well.
+<h3>Multi layer perceptron</h3>
+What if your problem is not linear ? So we need to twist and turn the linear functions. We use the sigmoid functions to do this.
+<h3>Good vs Bad or Gray vs Grayyer<h3>
+Since we use the sigmoid, things are no longer simple. We need to assign weights based on the previous weight. We do this by mathematics
+and differentials.
+<h3>So many Layers!</h3>
+And so the next basic question? Why do we need multiple layers? This is because, we need to weigh the combinations of input in order to make
+the system learn. So it can find the relationships between various combination of inputs. How do we find out how many layers we need?!
+<h3>Training vs Using</h3>
+The huge difference which is very small!!
+<h3>Breaking the cyclicity! - Backpropagation</h3>
+The problem training this is cyclic!! Training using the sigmoid poses a threat, as we get the actual only at the last layer.
+But the values to be adjusted are at the first
+layer is dependent on the sub sequent layer. So how do we adjust them? All possible combinations of weights with a exponential complexity?
+No! We can exploit the mathematical structure of the sigmoid fucntion. The differential of the sigmoid 
 </body>
 </html>
