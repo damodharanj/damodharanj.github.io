@@ -35,6 +35,7 @@
 			font: inherit;
 			vertical-align: baseline;
 			font-family: 'Roboto Mono', monospace;
+			line-height: 1.2
 		}
 		/* HTML5 display-role reset for older browsers */
 		article, aside, details, figcaption, figure, 
@@ -116,6 +117,9 @@
 		.item:active {
 			transform: scale(0.95);
 		}
+		.flexer h1 {
+			text-decoration: underline;
+		}
 
 		#item1 {
 			grid-column: 1/4;
@@ -123,7 +127,21 @@
 			background-color: #F44336;
 			color: #FFF0A5;
 			font-size: 1.5em;
+			color: black
 			/*border-top-left-radius: 50px;*/
+		}
+		#item1 {
+			/* position: fixed; */
+		}
+		#me {
+			background-image: url('./image.png');
+			background-position: center;
+			filter: opacity(180px);
+			background-size: cover;
+			width: 100%;
+			height: 100%;
+			mix-blend-mode: darken;
+			filter: brightness(1.8)
 		}
 		#item2 {
 			grid-column: 4/5;
@@ -154,7 +172,7 @@
 			background-color: #607D8B;
 		}
 		#item7 {
-			grid-column: 3/5;
+			grid-column: 1/5;
 		}
 
 		@media screen and (min-width: 700px)  {
@@ -188,44 +206,44 @@
 <body>
 	<div class="container">
 		<div id="item1" class="flexer item">
-			<h1>Damodharan J</h1>
-			<p>
-				Hello! from a fellow developer from India! Baffled by the openess of the web technology, am a frontend developer by choice and I love doing it; Here I'll be sharing my experiences and experiments on various new web technologies;
-				You'll be getting a new post every Saturday;
-			</p>
+			<div id='me' class="flexer item">
+				<h1>Damodharan J🐻</h1>
+				<p>"Hello World!"</p>
+				<ul>
+					<li>Programmer by 💙</li>
+					<li>Speaker by hobby</li>
+				</ul>
+				
+			</div>
 		</div>
 		<div id="item2" class="flexer item" target="https://damo.js.org/palagai-js">
-			<h1>Personal Slate</h1>
+			<h1>Personal Slate 👨‍🏫</h1>
 			<p>Feel free to use this as a personal marker board of web; Anything you write is private and saved in local;</p>
 		</div>
 		<div id="item3" class="flexer item" target="https://damo.js.org/wasm-inspector/">
-			<h1>Web Assembly Inspector</h1>
+			<h1>Web Assembly Inspector 👮</h1>
 			<p>
 				Have a .wasm file and don't know what it exports? Feel free to use this tool to inspect before taking it into production;
 				And again you have your data;
 			</p>
 		</div>
 		<div id="item4" class="flexer item" target="https://github.com/damodharanj/dhruvideo">
-			<h1>Dhruvideo</h1>
+			<h1>Dhruvideo 📺</h1>
 			<p>
 				Create a offline capable presentation using this simple tool;
 			</p>
 		</div>
-		<div id="item5" class="flexer item">
-			<h1>Web Component Boilerplate (coming soon...!)</h1>
-			<p>React is the new jQuery; But sooner or later its going to face the same end of jQuery; So why step up your game with the new custom component specification;</p>
-		</div>
-		<div id="item6" class="flexer item">
-			<h1>Machine learning (coming soon...!)</h1>
-			<p>Stop struggling with python as you can experience and program machine learning easily in browser using tensorflow-js; This example has a hate speech detector;</p>
+		<div id="item5" class="flexer item" target="https://github.com/damodharanj/base-component">
+			<h1>Web Component Boilerplate🔩</h1>
+			<p>Step up your web development game without any framework using web components specification;</p>
 		</div>
 		<div id="item7" class="flexer item">
-			<h1>Contact</h1>
+			<h1>Follow Me 🏎️</h1>
 			<p>
 				<ul>
-					<li>Email</li>
-					<li>Github</li>
-					<li>Medium</li>
+					<li><a href="https://github.com/damodharanj/">Github</a> - Things I do when I get a "💡" moment</li>
+					<li><a href="https://medium.com/@damodharanjay">Medium</a> - Place where I record my aligned thoughts 🤔🌥️</li>
+					<li><a href="https://linkedin.com/in/damojay/">Linkedin</a> - You know this 🔥🔥🔥</li>
 				</ul>
 			</p>
 		</div>
