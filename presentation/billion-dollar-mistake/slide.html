@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Billion dollar mistake of null and avoiding it in Typescript</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Damodharan J">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Billion dollar mistake and avoiding it in Typescript</h2>
+					<h3 style="text-decoration: underline">Algebraic Data Types in Typescript</h3>
+					<p>
+						<small>By <a target="_blank" href="https://damo.js.org">Damodharan J</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Null pointer</h2>
+					<section>
+						<p>* What & Why of Null</p>
+						<p class="fragment">* Undefined vs Null</p>
+						<p class="fragment">* Billion Dollar Mistake - Tony Hoare</p>
+					</section>
+				</section>
+
+				<section>
+						<h5>Enter Typescript - JS with type Annotations</h5>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html?strictNullChecks=false#code/DYUwLgBAHgXBB2BXAtgIxAJwgXggVgG4BYAKFIDNF4BjMASwHt4IBDAEzYgApYEV0MAGggBPOEjSYAlBADepCBAzhEGZlAgBqUcRIBfUhSq1GzOmxDx6YEdwDOcO2Ax14AcxnySi5WFXM7XQMyEnNLaxEuJGBgKV1SUEg7FBxWDi4AFmE8OKA"></iframe>
+						<p class="fragment">
+								Thank you! <span class="fragment">???? ....</span>
+						</p >
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+					<h2>Filling in the "void" created by null</h2>
+					<p>Elegant way to deal with the absense of a value</p>
+					<p>Make sure all cases are handled</p>
+					<p class="fragment">in compile time......</p>
+				</section>
+
+				<section>
+					<h5>Enter Union Types in Typescript</h5>
+					<p>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html?strictNullChecks=false#code/LAKAZgrgdgxgLgSwPZQAQICYFMqLgT1QAoBnALlRLgCcEoBzVAH1SggBt2BKVAb1FSDU1LHAjU0JAHTsc9OAAsA3KAC+QA"></iframe>
+					</p>
+				</section>
+
+				<section>
+						<h5>Extending Union type to all types - type definitions</h5>
+					<p>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/C4TwDgpgBAsghiARhAPAFQHxQLxTVAHygDsBXAG3IFgAoWgY3LgGdmoAFCAJ2YHtioAb1pRRJOAFsIALlgJkKZsC4BLYgHMMAbhFjmKxOTXrZ8JKk49+22rtH1+SrqXrBeXABTFJMuecXKxhgANFD6hsam8hbcfMQYAJRCdmKiwAAWKswAdN5SOOJSOjSpqRlZ2eFGGgVVxsWpAL60zXQ0AGakxK4q-FAqACYQxMAqoFAezFH+TkFJwiViKu0TbNi4ZJTzKalcEMCkXAIADA1ijVAQ5MzQC6ViewdHYdnkw+oZZ6KtjUA"></iframe>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Visitor Pattern - A pragmatic approach to handle multiple cases in OOP</h2>
+						<p class="fragment">Open - Closed Principle</p>
+						<p class="fragment">Needs method overloading for it work in its finest</p>
+					</section>
+					<section>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/LAKAlgdgLgpgTgMwIYGMYAIDKALJAHDAb1HVPSThiQAoBKALnQgFcBbAI3gG5QBfUUCgA2SAM6j0AJRgoo6YiDLohMCAHMo2Riw7cSZdpSQATTdrac4PRWRQB7CKKhxmsu3Gor1ZphfgAadEMqUy1fXThaeXR9JVJNMFEAOi8NbHQAXmVVNK4Ymzj0BOTgk01MoKNQvNj0fgLyIzp5WqVKKGY4CCLsRKTS0PQAKh6+1M1rJXr6wRFxdABhMDhhIlq4EzBmUXMIydtVWDhGAG0dS0Dz+ABdfdJ7R2dXKHdqDeMtnfCL9DRoeFOVzglz8cGuUUI+UK8V6yXenwq8O2NQaSmKST+RwqmO4ULI9SUFCozQU0PQ7U63QAskhNEkAAoASWGozhm22LPRSNEdzqfAEIGEYgkADVEmAXnAWg0nHBIGowAgAJ5vRjSWQQ1pkWozGXOeWKlUoRhLFYqTUgHX8y02gV220O+32gD0zqwdiEzCgYAcoFdvzmovFkul-qUsoNytVUhkcgAPotlqsLWS-W6pmm6kA"></iframe>
+					</section>
+				</section>
+				<section>
+					<h5>Visitor Pattern in typescript - Through Union types</h5>
+					<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/LAKALgngDgpgBAZQBYENZwLxwMIEsBOAxgDbwA+cASjIWANyigkoDOLVNYcA3qHP3ADWuAHYATAFxwA5Pk7TMMubWkMQAuKREBzMEikiArgFsARjHxqNpuSjF6DJ85b4DCAexEsw+Q7Xf4ABRauvpwRmYWADRwNjB2DuFOFgCUPHCuGvx6uCwAdCF6ioVIdBnqWdlIuXlxCUiKdfal5RoAvplwKLaBabwVlXJghvgicDn5TUUAVOPV+SVWAh0gK0zErOx4RKQ8ncLiUtKEBCQwCljHp6Sqnfh2uIYsjpEuA3CEMCJgFlIA2hFnDFARYALpLfgeLw+PxgAKBe5iR7PJKvGKfb6-OAA5L4YG40F9VqVOY1RHIxTkp5lToaCZ5DE-fCKRkWGnvFYabrxXp7d4aIYjMYAWRQejyAAUAJJwWb0qnsOXzPIKiFwFZrEAAM0MIlouE8cG8+FE2lwWogcECKOQaBgfU6LAA7rgwIQGta8gcxA7+W5WPBZPIJLSSYLRnAAAbUWhSAAk3EmtmabRiCYWX1CbUjalDkIDMhOO3OIb9gxgwwjke2Z3jiZVDyeqbg6YZXyZfwADKDm63Wfg-gBGHs5zoa0BAA"></iframe>
+				</section>
+				<section>
+					<section>
+						<h2>Why Typescript approach is better</h2>
+						<p>Change in the architecture, makes the compiler guess the changes to be done</p>
+					</section>
+					<section>
+						<h5>In Action!!!!!</h5>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/LAKALgngDgpgBAZQBYENZwLxwMIEsBOAxgDbwA+cASjIWHBZUgPYC2ARgK4DOA3KKLgB2YGPgBmKQvEatOXOAG9QcFXFKCA5mCQAuOII7tRfEKrht8MFABNteg0fwmzKTaXuG2x5aoDWQ6z0Acnxmdm4gkwBffhASFC55alpFHxV-QUC4EJowIMxsy1pItLUYTTt9T29TVQsrW10qx2dVQiZBLjB8DlomfAAKdS0mhy98ABpzSxtKsdEASkU4UrNtXC4AOmHtAp2kHhXasxV1rfrZpAKLxsPSmOO4FBmBpaVHs0swDnxBODPNjddgAqf5IDbbcojVoqB4PUDxRI4AgkeDvMwZLJBQgo0j5LDY3EwEqPfA2XDcDwtUpSYSiPQAbXmk2a4wAujC4O1Ot1emB+gMydYKVwqeMprSRPhGcypsy2W8jidVAChSKCmruHcPirwVtJaICganErVA8XC83qtVF8fn8ALIobSbAAKAEk4KDVeTuJ6wRDNbx7qB4SAxBxBLRcB0wfgmAB3ACi+DjgwAHvYYAA3RapUkwb6-fQweNwZOpgZBACqglQmVI1i5CWJSwSxZzJpUIdi4cjYGjfy6+CEGlwYggcAGosQqFgVseXHjuDAhCuU82mPnypUhGbhVyQR01uVtqLAANkmA9AASBTnGaNKJTW9bfZRM8mY9NrjwQlEPFHjqJ4FnacBnng-4wDed6bIGT5wC+mzGgyAAMbLwYhyEAIzoR+sTbnAAD0hHfr+oSyBEgEEcRJynn8F5hHI0GvlC2gYTBQJIO+nLmjaIFFtocZJimApcAs0SxEAA"></iframe>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3 style="text-decoration: underline">Math behind Union Types + Kind strategy = Sum Types</h3>
+						<p>* Also known Discriminated Unions</p>
+						<p>* Analogy behind the "Sum"</p>
+					</section>
+					<section>
+						<iframe  style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/C4TwDgpgBAkgTgewHYFsCGSoF4oHIZRoqyJICyGUAFAM5Jpg0CUuA3FAPQdQCMAsAChQkKAGEG2PAQDGlACYIowABYBLGoQA2mqHLQg2nbjyiDh0ACrKEcSfkLFlaAG6qkAc0JQwGVdMLAwGjSANYAhIZcvIJm4NAAQggIOjjAcACu0AA+UABmaJo0EOxRAEwxQnFQACKqrkgQFnBuqqCS8MjomDniYFA5VjZGUADMFeZQAKKtyhBwADwAggA0UPEAfJKL-Wsl3AD8h0eH41VNLaAA8nCJyZLTKnPzt5qrtfWNzUitIOt7UABxTI0Gj7Cq5dJIaTAVTIbxfYDUYAALig52+VxuSU0TCgAG9BFAiVBVLkkXEEGTEVgcLgaGk3O5cLi8UYKsSoABfKAQQrQVlcdnEzmCTlAA"></iframe>
+					</section>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
