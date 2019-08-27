@@ -30,6 +30,11 @@
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
+		<style type="text/css">
+		h1, h2, h3, h4, h5 {
+			text-decoration: underline;
+		}
+		</style>
 	</head>
 
 	<body>
@@ -47,17 +52,20 @@
 				</section>
 
 				<section>
-					<h2>Null pointer</h2>
-					<section>
-						<p>* What & Why of Null</p>
-						<p class="fragment">* Undefined vs Null</p>
-						<p class="fragment">* Billion Dollar Mistake - Tony Hoare</p>
-					</section>
+						<section>
+							<p>* What & Why of Null</p>
+							<p class="fragment">* Undefined vs Null</p>
+							<p class="fragment">* Billion Dollar Mistake - Tony Hoare</p>
+						</section>
+						<section>
+								I call it my billion-dollar mistake…At that time, I was designing the first comprehensive type system for references in an object-oriented language. My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler. But I couldn’t resist the temptation to put in a null reference, simply because it was so easy to implement. This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.
+								– Tony Hoare, inventor of ALGOL W.
+						</section>
 				</section>
 
 				<section>
 						<h5>Enter Typescript - JS with type Annotations</h5>
-						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html?strictNullChecks=false#code/DYUwLgBAHgXBB2BXAtgIxAJwgXggVgG4BYAKFIDNF4BjMASwHt4IBDAEzYgApYEV0MAGggBPOEjSYAlBADepCBAzhEGZlAgBqUcRIBfUhSq1GzOmxDx6YEdwDOcO2Ax14AcxnySi5WFXM7XQMyEnNLaxEuJGBgKV1SUEg7FBxWDi4AFmE8OKA"></iframe>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/PTAEBcE8AcFNQIYDskHtwPAS1UgsAFAA2s4oAHgFyhICuAtgEawBOoAvKAKwDchhICDHhYkAM1awkAY1iExtGdlyIAJqtAAKKjQbMWAGlCRqdJqwCUoAN6FQoFqVoskFUAGpjfAgF9+BQQAVAAt4AHEEJhIAQnlFaWVXLFUpbCgtAGdqDPAWUQBzK1sCe0dwZ1cM7z8CQmTUrChNOiIiC29CEjIMhg41VU0AFiMudqA"></iframe>
 						<p class="fragment">
 								Thank you! <span class="fragment">???? ....</span>
 						</p >
@@ -74,7 +82,7 @@
 				<section>
 					<h5>Enter Union Types in Typescript</h5>
 					<p>
-						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html?strictNullChecks=false#code/LAKAZgrgdgxgLgSwPZQAQICYFMqLgT1QAoBnALlRLgCcEoBzVAH1SggBt2BKVAb1FSDU1LHAjU0JAHTsc9OAAsA3KAC+QA"></iframe>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/PTAEDkFcBttBhAFgUwMYGsDOBYAUAM0gDtUAXASwHsjRyATZIi0gT1AApMAuUTUgJ3JEA5qAA+oIjGgBKUAG88oZaH7JSkfjUwA6aI2GlEAbjwBfPCEvBrt3Ffs3H1h66cg3dj+59ffzgMISCmpJaQAJAEMiOn06AEkGJnJWDm5eASFRCSlYOUVcFVp8DlYAB2RKEsxQAF560AByPkERRvylIpVdfREjU0KVM1BkaExkBU6u1XVNGgAGAaKLQeU1DS1QRfMgA"></iframe>
 					</p>
 				</section>
 
@@ -113,13 +121,67 @@
 					<section>
 						<h3 style="text-decoration: underline">Math behind Union Types + Kind strategy = Sum Types</h3>
 						<p>* Also known Discriminated Unions</p>
-						<p>* Analogy behind the "Sum"</p>
+						<p>* Counting Analogy behind the "Sum"</p>
 					</section>
 					<section>
 						<iframe  style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/C4TwDgpgBAkgTgewHYFsCGSoF4oHIZRoqyJICyGUAFAM5Jpg0CUuA3FAPQdQCMAsAChQkKAGEG2PAQDGlACYIowABYBLGoQA2mqHLQg2nbjyiDh0ACrKEcSfkLFlaAG6qkAc0JQwGVdMLAwGjSANYAhIZcvIJm4NAAQggIOjjAcACu0AA+UABmaJo0EOxRAEwxQnFQACKqrkgQFnBuqqCS8MjomDniYFA5VjZGUADMFeZQAKKtyhBwADwAggA0UPEAfJKL-Wsl3AD8h0eH41VNLaAA8nCJyZLTKnPzt5qrtfWNzUitIOt7UABxTI0Gj7Cq5dJIaTAVTIbxfYDUYAALig52+VxuSU0TCgAG9BFAiVBVLkkXEEGTEVgcLgaGk3O5cLi8UYKsSoABfKAQQrQVlcdnEzmCTlAA"></iframe>
 					</section>
+					<section>
+						<p>Either - equivalent to Addition</p>
+						<p>Either<A, B> = A + B (where A and B are types)</p>
+					</section>
 				</section>
 
+				<section>
+					<h5>Full Blown Math!</h5>
+					<iframe  style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/C4TwDgpgBAoglsAFhATgHgIIBooCEB8UAvFBlAD55QD01pUA1HgLABQbokUAkigPYA7ALYBDAcSgByblBFCe-AQFkxUABQBnASLAaAlJIDcNOgEYO4aAGEdE6VADGqgCZ8oSOBtkAbb1GciIEYmUKZQFlwAKoh8KHYyclCIIgBucAIA5rJQYGJwDrLAwCIOANYAhMG0oWwR0AAicGkCEJEo6QggEryCouKUNmAUUNGxIQDMtazeEMCyAEYAXLAIyOjzfHwzYjiNza3tAp34xtUATIxQk+ys1Woil-N6lwUkD0xq8y96UzNzIvMAPoOZbwJCoNBgtZoDZbCA7KB7dIHDqgfA4AQAV18hBIwBQmIghl+s1kgPmIJW4PWm22AhwUIhSJabVRIAx2O8+BOJP+FMBGkxGREKGWsLpw2ZKKOoGGWN8xJufygEAAHrkWs5lvjCcMAGYibwaaCUHrCVQDWyUUYoRVsaoAdWghoA7oEvMkUtAAKxQFKGwleMTOKAu6CuFUAR0xImAcEEhqgKHhGkE6Qy5Sm1XeUAADBIRLyybnQasIeL4fS-Xw4M5ce4CUSiyJAbnAaYxbTKyEBG5-d5dXqxika85m63AWqNRAtQ3dZQDUboNVe36A9Ah3ER7Xyru2EA"></iframe>
+				</section>
+
+				<section>
+					<section>
+						<h3>Product Types</h3>
+						<p>Counting analogy for products</p>
+						<p>Eg. interface, class, or simple 'objects'</p>
+					</section>
+					<section>
+						<iframe  style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/LAKALgngDgpgBASQE4HsB2BbAhmuBeOAcgTiw0VTQFkc4AKAZzSygYEpCBuOAeh7gCMoSLDgBhFviIkAxrQAmKOGAAWASwakANlrjysELr34C4w6PAAqKlEinFS5FVgBuatAHNScKDjUzSMDAsGQBrAEIjPkFQc1EAETU3NBhLJHc1SClkdGxcAB9xSULrW2M4AGZYkHcwGCQAMxD4ACEUFC0YHABBNHk0jKyAb3KAfnGJ0dA4GbgAI3atAC55xa7caIAmadmwdLRMiG6XGE96lcTk1P3D7miqkABfatr6ppl4AAVUeQBXGTAAB5ugAaOAtAB8cCGOxmLiwWgEK26nFhcHhWk2KxaqKe1U6YFIcxW3xQfwBgIWHXWYMu7mugwgELu-E2cAAVJVqiIvvUGOgpKTyUC0L8MHN6mChf8gQw9u4PLSsHUIczyqLxfUOXA5fsvJz4sqYPiYIT9BgUCS+QKCDCQLN0QikYIQWiMVjoWiHRjnYRDRb5M4kLQAFKEV32h2zaLulaTcZo554kCgaJYbUABikGZeaDqjWacAAysEkBnAZYoXbvU6VpZcTXMSsXCg1PJcUnU-x05zTAQsLn8+94CWsEgBBWq27a3B62iYwiPfGpsnQAS4DAPCtR+PATlMDgobafSsHGQKOgaLhGMxWBxHri16aNx4PTuJ1TOoepEMT8okL8MAPiahKbhU26lh+azfseM5NFoDBAY+IDRAA8qoWptqcYCZGoMCaDYWjyMo7ThNUabanQczajIbBSHQPbzHRnIyNUoBAA"></iframe>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3>Constructing List type using Algebra</h3>
+						<p>List = empty or (head and remaining-list)</p>
+					</section>
+					<section>
+						<iframe style="width: 100%; height: 500px" src="https://www.typescriptlang.org/play/index.html#code/LAKALgngDgpgBAGQJYGcwBVowDwEEB8cAvHAHYCuANpXAD5wAUucAZIqhlnvgJRwD0-OAH5Ro0KCSkwMAE4AzAIYBjeADkA9qQCiAWyiRkabnADeoOJbgALGIoAmALji4A3BauyYaZ0bDdQAF8JcCx2YwJiMioaek0dfUMObncQUEoYMDgYRIg-KIpqVPTMuEoOX2SKXQAjOUISU1sHZwBWABo4Lx9o6kDikAys8rQAJkrjarrZBrNmpzgOru8wZya7BYA2Tu7V3spA-pD5clJlMCQtOAB3RUoAa3yGSgn-Kfq+UwEhAHEATQAsmpcABldAASQAwiCAIRwmEeSxDOAoci6KIABlSVjgSHkjBoRBIhUon0ROOWYHIslIKLR2KsgWylBQ8HMIApVlR6IA1CRKAA6eZwHk3O6PDjPAW7HgMzleKk0um6OVwYIgdWgQQoxTyFZlDhih5SADm8JhQA"></iframe>
+					</section>
+					<section style="font-family: monospace">
+							<h5>Math behind List construction.....</h5>
+							<p>x = 1 + a*x</p>
+							<p>x = 1 + a*(1 + a*x) = 1 + a + a*a*x</p>
+							<p>x = 1 + a + a*a + a*a*a + a*a*a*a...</p>
+							<p style="font-family: unset">We just constructed a infinte type safe list!</p>
+					</section>
+					<section>
+						<a href="https://codewords.recurse.com/issues/three/algebra-and-calculus-of-algebraic-data-types">More here!</a>
+					</section>
+				</section>
+				<section>
+					<h3>History behind types</h3>
+					<p>"Discovered" by Alonzo Church - 1940's</p>
+					<p>In era where "hardware" computers were just a theory!</p>
+				</section>
+				<section>
+					<section>
+						<p>Holy Grail = Design Patterns & Math & Compile Time Checks | Oracle Machine</p>
+					</section>
+					<section>
+						<h3>Conclusion</h3>
+						<p>Education is the manifestation of perfection present in a man</p>
+						<p>                                - Vivekananda</p>
+					</section>
+				</section>
 			</div>
 
 		</div>
