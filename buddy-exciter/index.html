@@ -1,0 +1,129 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buddy Exciter</title>
+</head>
+<style>
+    .container {
+        max-width: 400px;
+        margin: auto
+    }
+    .horizontal {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+        justify-content: space-between;
+    }
+
+    .horizontal > * {
+        padding: 10px;
+    }
+
+    .horizontal input {
+        width: 230px;
+    }
+
+    h2 {
+        margin: 0px;
+    }
+
+    .submit {
+        display: flex;
+        flex-direction: row-reverse;
+        padding-top: 10px;
+        height: 30px;
+    }
+
+</style>
+<body>
+    <div class="container">
+        <div class="horizontal">
+            <h2>Interval</h2>
+            <input id="duration" type="number" value="20">
+            <!-- <h2>Mins</h2> -->
+        </div>
+        <div class="horizontal">
+            <h2>Activity 1</h2>
+            <input id="action1" type="text" value="Pet, Feed, Snap">
+        </div>
+        <div class="horizontal">
+            <h2>Activity 2</h2>
+            <input id="action2" type="text" value="Battle Gym, Battle Team Leader">
+        </div>
+        <!-- <div class="horizontal">
+            <h2>Next Activity :</h2>
+            <h2></h2>
+        </div> -->
+        <div class="horizontal">
+            <h2>Counter:</h2>
+            <div style="display: flex; padding: 0px; width: 230px; justify-content: space-between;">
+                <button>+</button>
+                <input type="text" style="width: 100px;">
+                <button>-</button>
+            </div>
+        </div>
+        <div class="submit">
+            <button id="startB" onclick="start();" style="width: 100px;">Start</button>
+            <button onclick="stop();" style="width: 100px;">Stop</button>
+        </div>
+    </div>
+</body>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(function(reg) {
+            console.log('Service Worker Registered!', reg);
+
+            reg.pushManager.getSubscription().then(function(sub) {
+            if (sub === null) {
+                // Update UI to ask user to register for Push
+                console.log('Not subscribed to push service!');
+            } else {
+                // We have a subscription, update the database
+                console.log('Subscription object: ', sub);
+            }
+            });
+        })
+        .catch(function(err) {
+            console.log('Service Worker registration failed: ', err);
+        });
+        
+    }
+
+    function displayNotification() {
+        if (Notification.permission == 'granted') {
+            navigator.serviceWorker.getRegistration().then(function(reg) {
+            var options = {
+                body: 'Here is a notification body!',
+                icon: 'images/example.png',
+                vibrate: [100, 50, 100],
+                data: {
+                dateOfArrival: Date.now(),
+                primaryKey: 1
+                }
+            };
+            reg.showNotification('Hello world!', options);
+            });
+        }
+    }
+
+    if (localStorage.getItem('start') === 'true') {
+        startB.disabled = true;
+    } else {
+        startB.disabled = false;
+    }
+
+
+    function start() {
+        startB.disabled = true;
+        localStorage.setItem('start', true);
+        navigator.serviceWorker.controller.postMessage({message: 'start', duration: duration.value, action1: action1.value, action2: action2.value});
+    }
+
+    function stop() {
+        startB.disabled = false;
+        localStorage.setItem('start', false);
+        navigator.serviceWorker.controller.postMessage({message: 'stop'});
+    }
+</script>
+</html>
