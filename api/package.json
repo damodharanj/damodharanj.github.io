@@ -1,0 +1,7 @@
+{
+  "name": "temple-app",
+  "version": "0.0.0",
+  "dependencies": {
+    "googleapis": "47.0.0"
+  }
+}
