@@ -80,10 +80,11 @@ module.exports = (req, res) => {
       var accessToken = tokens.access_token;
       console.log(accessToken)
       reqForNotification(accessToken, token);
+      res.send({val: accessToken})
       // See the "Using the access token" section below for information
       // on how to use the access token to send authenticated requests to
       // the Realtime Database REST API.
     }
   });
-  res.send({val: Math.PI})
+  
 }
