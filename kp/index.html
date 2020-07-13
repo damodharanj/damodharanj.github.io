@@ -1,0 +1,322 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" charset="utf-8" src="https://unpkg.com/@kor-ui/kor@1.0.10/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@kor-ui/kor/kor-styles.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vanillawc/wc-codemirror/theme/monokai.css"> -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-codemirror/index.js"></script> -->
+    <!-- <script type="module" src="https://unpkg.com/codemirror@5.55.0/addon/mode/overlay.js"></script> -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-monaco-editor@1/index.js"></script>
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-codemirror/mode/markdown/markdown.js"></script> -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-codemirror/mode/gfm/gfm.js"></script> -->
+    <script type="text/javascript" src="https://unpkg.com/markdown-it@11.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+    <script src="https://unpkg.com/isomorphic-git@beta"></script>
+    <script type="module">
+    import http from 'https://unpkg.com/isomorphic-git@beta/http/web/index.js'
+    // Initialize isomorphic-git with a file system
+    window.dir = '/tutorial'
+    window.http = http;
+    window.fs = new LightningFS('fs')
+    // I prefer using the Promisified version honestly
+    window.pfs = window.fs.promises
+    window.trees = [git.WORKDIR()]
+    </script>
+    
+    <style>
+::slotted(not([name])) {
+  height: 100%;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+}
+
+.gutter.gutter-horizontal {
+    cursor: ew-resize;
+}
+      
+  kor-drawer {
+      display: none;
+  }
+  kor-pane {
+    display: block;
+  }
+
+  #editor {
+    height: 100%;
+  }
+
+  kor-app-bar {
+    display: none;
+  }
+
+
+  kor-nav-bar {
+    display: none;
+  }
+
+  #frame {
+    height: 100%;
+  }
+  @media screen and (max-width: 767px) {
+    kor-drawer {
+      display: block;
+    }
+    kor-pane {
+      display: none;
+    }
+
+    kor-nav-bar {
+      display: block;
+    }
+
+    #preview {
+      display: none;
+      
+    }
+
+    #frame {
+      height: calc(100vh - 144px);
+    }
+
+    kor-app-bar {
+      display: inherit;
+    }
+    .mainer {
+      display: block;
+    }
+
+
+  }
+</style>
+</head>
+<body>
+    
+    <kor-page theme="light">
+      <!-- <kor-app-bar label="KingPin" mobile slot="top">
+        <kor-avatar slot="left"></kor-avatar>
+        <kor-text onclick="document.querySelector('#left').visible = true" size="header-1">KingPin</kor-text>
+      </kor-app-bar> -->
+      <!-- <kor-app-bar slot="top" mobile label="Kingpin">
+        <kor-icon  icon="menu" slot="left" size="m"></kor-icon>
+      </kor-app-bar> -->
+      <kor-drawer id="left" width="320px" label="Kingpin">
+          <kor-accordion label="Name" expanded>
+            <kor-tabs orientation="vertical">
+              <kor-tab-item label="Active"></kor-tab-item>
+              <kor-tab-item label="Active"></kor-tab-item>
+              <kor-tab-item label="Active"></kor-tab-item>
+            </kor-tabs>
+          </kor-accordion>
+      </kor-drawer>
+      <div class="flex mainer" style="width: 100%">
+        <kor-pane id="sidebar" slot="left" label="Kingpin" style="overflow: scroll;">
+          <!-- <kor-accordion label="Name" expanded></kor-accordion> -->
+          <kor-button id="addvault" slot="footer" color="secondary" label="New Vault" onclick="document.querySelector('#functions-and-footer').visible = true"></kor-button>
+          <kor-modal id="functions-and-footer" label="Add Vault">
+            <kor-input id="giturl" label="github-url" condensed></kor-input>
+            <kor-input id="foldername" label="folder-name" condensed></kor-input>
+            <kor-button id="addnewvalut" label="Add"></kor-button>
+          </kor-modal>
+        </kor-pane>
+        <kor-grid id="main" class="flex"  spacing="l">
+          <kor-card style="padding: 0px;" id="editor" grid-cols="6" grid-cols-s="12">
+            <wc-monaco-editor id="editorcomp" language="markdown"></wc-monaco-editor>
+          </kor-card>
+          <kor-card style="padding: 0px;" id="preview" grid-cols="6" grid-cols-s="12">
+            <iframe id="frame" style="font-family: open-sans, sans-serif;display: block; border: 0px;"></iframe>
+          </kor-card>
+        </kor-grid>
+      </div>
+
+      <kor-nav-bar slot="bottom">
+        <kor-tabs style="justify-content: center">
+
+          <kor-tab-item id="edit" icon="edit" active></kor-tab-item>
+          <kor-tab-item id="previewbutton" icon="remove_red_eye"></kor-tab-item>
+          
+          <!-- <kor-tab-item id="side-by" icon="looks_two"></kor-tab-item> -->
+          <!-- <kor-tab-item id="tag" icon="local_offer"></kor-tab-item> -->
+        </kor-tabs>
+        <kor-icon onclick="document.querySelector('#left').visible = true" icon="more_vert" button slot="functions"></kor-icon>
+      </kor-nav-bar>
+    </kor-page>
+</body>
+<script type="text/javascript">
+
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+  Split(['#editor', '#preview'], {
+      minSize: [70, 30],
+      sizes: [50, 50],
+      elementStyle: (dimension, size, gutterSize) => ({
+        'flex-basis': `calc(${Math.max(size, 30)}% - ${gutterSize}px)`,
+      }),
+      gutterStyle: (dimension, gutterSize) => ({
+          'flex-basis':  `${gutterSize}px`,
+      }),
+      onDragEnd: function(sizes) {
+        editorcomp.editor.layout();
+      },
+  })
+
+  Split(['#sidebar', '#main'], {
+      sizes: [20, 80],
+      elementStyle: (dimension, size, gutterSize) => {
+        console.log(dimension, size, gutterSize);
+        return {'flex-basis': `calc(${Math.max(size, 20)}% - ${gutterSize}px)`}          
+      },
+      gutterStyle: (dimension, gutterSize) => ({
+          'flex-basis':  `${gutterSize}px`,
+      }),
+      onDragEnd: function(sizes) {
+        editorcomp.editor.layout();
+      },
+  })
+
+  var md = window.markdownit({html: true,}); 
+
+  var defaultRender = md.renderer.rules.fence
+
+  md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+    const t = tokens[idx];
+    if (t.info === 'mermaid') {
+      // window.testret = defaultRender(tokens, idx, options, env, self)
+      return  `<div class="mermaid">${t.content}</div>`
+    }
+    // pass token to default renderer.
+    return defaultRender(tokens, idx, options, env, self);
+  };
+
+  function refresh() {   
+      frame.contentWindow.removeEventListener('DOMContentLoaded', refresh);
+  }
+  function renderMd() {  
+    frame.contentWindow.addEventListener('DOMContentLoaded', refresh);
+    frame.contentDocument.body.innerHTML = ''
+    frame.contentDocument.body.innerHTML = md.render(editorcomp.editor.getValue());
+    const s1 = document.createElement('script');
+    s1.setAttribute('type', 'text/javascript');
+    s1.innerHTML = `mermaid.contentLoaded()`
+    frame.contentDocument.body.appendChild(s1)
+  }
+
+  addnewvalut.addEventListener('click', () => {
+    const giturl = document.querySelector('#giturl')
+    const folder = document.querySelector('#foldername');
+    const name = '/' + folder.value
+    pfs.mkdir(name).then(() => {
+      git.clone({
+        fs,
+        http,
+        dir: name,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        url: giturl.value,
+        ref: 'master',
+        singleBranch: true,
+        depth: 10
+      }).then(() => {
+        populateItem(name)
+      });
+    });
+  });
+
+  async function populateItem(i) {
+    const a = document.createElement('kor-accordion');
+      a.setAttribute('label', i);
+      sidebar.appendChild(a)
+      git.walk({fs, dir: '/'+i, trees}).then(gfs => {
+        console.log(gfs, i);
+        const gitfs = gfs.flat().filter(x => !x._fullpath.startsWith('.'));
+        gitfs.forEach(f => {
+          const t = document.createElement('kor-text');
+          t.addEventListener('click', (e) => {
+            pfs.readFile('/' + i + '/' + f._fullpath, 'utf8').then(c => {
+              editorcomp.editor.setValue(c);
+            });
+          });
+          t.innerText = f._fullpath;
+          a.appendChild(t);
+        })
+      });
+      
+  }
+
+  async function populateSidebar() {
+    const x = await pfs.readdir('/');
+    x.forEach((i) => {
+      populateItem(i);
+    });
+  }
+
+  // populateSidebar();
+
+  window.addEventListener('DOMContentLoaded', async (event) => {
+    populateSidebar();
+  });
+
+  setTimeout(() => {
+    frame.contentDocument.head.innerHTML =
+    `
+    <style>
+      body {
+        padding: 10px;
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css"></link>`
+
+    const s = document.createElement('script');
+    s.setAttribute('src', 'https://unpkg.com/mermaid@8.5.2/dist/mermaid.min.js')
+    frame.contentDocument.head.appendChild(s)
+
+    editorcomp.editor.updateOptions({
+      wordWrap: 'on'
+    })
+    monaco.editor.setTheme('vs');
+    editorcomp.editor.onDidChangeModelContent(debounce(renderMd, 700));
+    editorcomp.editor.setValue(`
+\`\`\`mermaid
+    graph LR
+      A --- B
+      B --> C
+      B --> D
+\`\`\`
+\`\`\`mermaid
+pie title NETFLIX
+    "Time spent looking for movie" : 90
+    "Time spent watching it" : 10
+\`\`\`
+    `)
+    
+    previewbutton.addEventListener('click', (e) => {
+      preview.style.display = 'block';
+      editor.style.display = 'none';
+      renderMd();
+    });
+
+    edit.addEventListener('click', (e) => {
+      editor.style.display = 'block';
+      preview.style.display = 'none';
+      renderMd();
+    });
+  }, 100);  
+</script>
+</html>
