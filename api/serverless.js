@@ -1,4 +1,9 @@
+const { convert } = require('convert-svg-to-png');
+
+
 module.exports = (req, res) => {
-  const { name = 'World' } = req.query;
-  res.status(200).send(`Hello ${name}!`);
+  const png = await convert(req.body);
+ 
+  res.set('Content-Type', 'image/png');
+  res.send(png);
 };
