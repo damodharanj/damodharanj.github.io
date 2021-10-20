@@ -4,13 +4,13 @@
 * [Javascript DOM](https://www.w3schools.com/js/js_htmldom.asp)
 * [Server / Backend - NodeJS](https://www.w3schools.com/nodejs/)
 * Advanced Frontend (For job focus) - React or Vue or Angular (anyone)
-	* https://www.w3schools.com/REACT/DEFAULT.ASP
-	* https://www.w3schools.com/whatis/whatis_vue.asp
-	* https://angular.io/
+	* [React](https://www.w3schools.com/REACT/DEFAULT.ASP)
+	* [Vue](https://www.w3schools.com/whatis/whatis_vue.asp)
+	* [Angular](https://angular.io/)
 
 ## Getting strong in Logic & Data structures
-* https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/#debugging
-* https://visualgo.net/en/sorting
+* [Algorithms](https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/#debugging)
+* [Easy Learning of Algorithms with visuals](https://visualgo.net/en/sorting)
 
 ## Free courses to get started
-* https://www.freecodecamp.org/learn
+* [Freecodecamp](https://www.freecodecamp.org/learn)
