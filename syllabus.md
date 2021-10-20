@@ -14,3 +14,37 @@
 
 ## Free courses to get started
 * [Freecodecamp](https://www.freecodecamp.org/learn)
+
+## Must know Java Basics
+* What is a class and an Object? - [Study Link](https://www.javatpoint.com/difference-between-object-and-class)
+	* When you write a class "A" does it have any parent? , investigate!
+
+
+* Different Data types and Access Specifiers in Java.
+	* What is the difference between "Life & scope of the variables". Explain with sample program.
+	* Write java programs to bring about the difference between public, private,package and protected specifiers!
+	* What is the meaning of declaring a class public? (try this by putting the class in a package and try to access the class from a different package!).
+
+
+* In java are the parameters passed by reference or by value?
+	* Write a program to test for basic data types, arrays, strings, string arrays and custom objects!
+
+
+* Is it possible to have a private class? 
+	* Write a class and try it out! , try protected also!
+
+
+* Is it possible to have a private constructor? 
+	* Write a class and try it out!, if possible how do you create an instance of it from another class?
+
+
+* What is the meaning of declaring a method "static" ? how do you invoke such a method ?
+* OOPs concepts with sample programs and what is use of it?
+* Exception Handling - Under standing the concepts of Exception handling and write sample programs.
+* Read about the Collection Framework.
+	* ArrayList
+	* HashMap
+	* Properties
+	* Iterator
+* IO Packages
+	* How to read and Write files.
