@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Typescript types for solving puzzles & proving properties of program</title>
+
+		<link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/black.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-color="beige">
+                    <h3>Typescript types</h3>
+                    <ul>
+                        <li><h4>Solving puzzles</h4></li>
+                        <li><h4>Proving properties of programs</h4></li>
+                    </ul>
+                    <img src="banner.jpeg" alt="">
+                    <!-- <img src="./banner.jpeg" alt=""/> -->
+                </section>
+				<section>
+                    <h4>Basics Of Typescript</h4>
+                    <h3>Intro</h3>
+                    <section>
+                        <ul>
+                            <li>Typescript - Javascript + Types</li>
+                            <li>Types are present only in compile time</li>
+                            <li>Complete type erasure after compilation</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Basics Of Typescript</h4>
+                    <h3>Structural Subtyping</h3>
+                    <section>
+                        <ul>
+                            <li>Class vs Interface vs Type</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Basics Of Typescript</h4>
+                    <h3>Generics</h3>
+                    <section>
+                        <ul>
+                            <li>Strong typing Array, Promise and other common higher order structures</li>
+                            <li>Opens up gateway to type level recursion - Strong typing JSON</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Basics Of Typescript</h4>
+                    <h3>Assertions</h3>
+                    <section>
+                        <ul>
+                            <li>Sometimes types need stronger clues</li>
+                            <li>With the base rules set, assertions can take care of runtime validations</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Basics Of Typescript</h4>
+                    <h3>Functor, Monoid & Monad in fp-ts</h3>
+                </section>
+                <section>
+                    <h4>Logical Programming</h4>
+                    <h3>Intro to Prolog & logical programming</h3>
+                </section>
+                <section>
+                    <h4>Logical Programming</h4>
+                    <h3>Solving simple puzzles</h3>
+                    <section>
+                        <ul>
+                            <li>Encode facts in structural types</li>
+                            <li>Populate the base data</li>
+                            <li>Let the type system do its magic!</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Logical Programming</h4>
+                    <section>
+                        <div>Article: 
+                            <a href="https://itnext.io/solving-riddles-with-0-lines-of-program-b23994072dd0">
+                                Encoding logic at type level in typescript
+                            </a>
+                        </div>
+                    </section>
+                </section>
+                <section>
+                    <h4>Proving properties of programs</h4>
+                    <h3>Type level arithmetics</h3>
+                    <section>
+                        <ul>
+                            <li>Defining Numerals using generics</li>
+                            <li>Defining operators using recursion</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Proving properties of programs</h4>
+                    <h3>Indexed List</h3>
+                </section>
+                <section>
+                    <h4>Proving properties of program</h4>
+                    <h3>Indexed Matrix</h3>
+                </section>
+                <section>
+                    <h4>Proving properties of program</h4>
+                    <h3>State machine encoding in type level!</h3>
+                    <h5>Shhh... Dependent Types in disguise</h5>
+                </section>
+                <section>
+                    <h4>Proving properties of program</h4>
+                    <h3>Template literals</h3>
+                </section>
+                <section>
+                    <h4>Proving properties of program</h4>
+                    <h3>Typelevel lexers & parsers!</h3>
+                </section>
+                <section>
+                    <h4>How does type level programming work</h4>
+                    <h3>Type system - A minimal functional language in itself</h3>
+                    <section>
+                        <br>
+                        <ul>
+                            <li>Generics are type level functions</li>
+                            <li>Functions i.e Generics compose easily</li>
+                            <li>And hence we encode any data using Church encoding - Making typescript's type system a mini lambda calculus**</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <ul>
+                            <li>Typescript type system is Turing Complete!</li>
+                            <li>Unfortunately provable types are non-goals of the language</li>
+                            <li>But nothing stops us from using exisitng features to prove properties</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h4>Implication & future of programming</h4>
+                    <h3>Formal verfication, Open source & testing</h3>
+                    <ul>
+                        <li>Properties of programs verified by compilers - Formal verification & Theorem provers</li>
+                        <li>Scanning through large open source code bases for backdoors</li>
+                        <li>Test driven development suddenly mainstream ??</li>
+                        <li>And, proof driven development becomes the hip</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4>Implication & future of programming</h4>
+                    <h3>Spec oriented programming</h3>
+                    <ul>
+                        <li>Types seem to be the dual of imperativeness**</li>
+                        <li>Types feel like teaching to a toddler about a domain**</li>
+                        <li>Specifications can be encoded at type level</li>
+                        <li>And provers can generate a proof - where one of them could be our correct program</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4>Implication & future of programming</h4>
+                    <ul>
+                        <li>Correctness - From hospitals to flights</li>
+                        <li>The next bank or a country's constitution could be only programs</li>
+                        <li>Bureaucratic machines can be replaced by (self amendmendment) programs**</li>
+                        <li>And so, taking chances is never an option...</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4>Thanks</h4>
+                    <h3>Inspiration & Regards</h3>
+                    <ul>
+                        <li>Philip Wadler - Proposition as types</li>
+                        <li>Nadia - Refinement Types</li>
+                        <li>Idris - Dependent Types</li>
+                        <li>Haskell, for keeping me ahead in my typescript usage</li>
+                        <li>r/haskell - My goto place for doubts in FP, Math & CS</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4>Thanks</h4>
+                    <h3>Inspiration & Regards</h3>
+                    <ul>
+                        <li>A Type of programming</li>
+                        <li>Algebra driven design</li>
+                        <li>Friends at Zoho</li>
+                    </ul>
+                </section>
+			</div>
+		</div>
+
+		<script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				plugins: [  ]
+			});
+		</script>
+	</body>
+</html>
