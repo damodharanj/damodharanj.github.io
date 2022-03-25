@@ -58,7 +58,7 @@
 
         const isOK = main && window.ts && sandboxFactory
 
-        console.log(main, sandboxFactory)
+        // console.log(main, sandboxFactory, ok)
         if (isOK) {
           document.getElementById('loader').parentNode.removeChild(document.getElementById('loader'))
         } else {
@@ -89,7 +89,7 @@
     }
 
     init().then((main, sandBoxFactory) => {
-        initEditor({main, sandBoxFactory});
+        initEditor(main, sandBoxFactory);
     })
   </script>
 </html>
