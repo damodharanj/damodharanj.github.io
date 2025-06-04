@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Harmonic Motion Explorer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 100;
+            min-width: 250px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .value-display {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button.paused {
+            background: #f44336;
+        }
+        
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="controls">
+            <h3>Simple Harmonic Motion</h3>
+            
+            <div class="control-group">
+                <label>Angular Velocity (ω)</label>
+                <input type="range" id="omega" min="0.1" max="3" step="0.1" value="1">
+                <div class="value-display" id="omegaValue">1.0 rad/s</div>
+            </div>
+            
+            <div class="control-group">
+                <label>Amplitude (A)</label>
+                <input type="range" id="amplitude" min="0.5" max="3" step="0.1" value="2">
+                <div class="value-display" id="amplitudeValue">2.0 units</div>
+            </div>
+            
+            <div class="control-group">
+                <label>Wave Length</label>
+                <input type="range" id="waveLength" min="2" max="8" step="0.5" value="4">
+                <div class="value-display" id="waveLengthValue">4.0π</div>
+            </div>
+            
+            <button id="playPause">Pause</button>
+            <button id="reset">Reset</button>
+            <button id="showBoth">Show Both Waves</button>
+        </div>
+        
+        <div id="info">
+            <strong>Controls:</strong><br>
+            • Mouse: Pan and zoom<br>
+            • The red dot shows the current position on the circle<br>
+            • Green waves: y = A sin θ (vertical projections)<br>
+            • Blue wave: x = A cos θ (horizontal projection)<br>
+            • Right side: wave vs time, Bottom: wave vs time<br>
+            • θ = ωt (angle increases with time)
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        class SHMVisualizer {
+            constructor() {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setClearColor(0x1a1a1a);
+                document.getElementById('container').appendChild(this.renderer.domElement);
+
+                // Parameters
+                this.omega = 1.0;
+                this.amplitude = 2.0;
+                this.waveLength = 4.0;
+                this.time = 0;
+                this.isPlaying = true;
+                this.showBothWaves = false;
+
+                // Camera controls
+                this.setupControls();
+                
+                // Create visualization components
+                this.createCircle();
+                this.createAxes();
+                this.createWaves();
+                this.createMovingPoint();
+                this.createProjectionLines();
+                
+                // Setup UI
+                this.setupUI();
+                
+                // Position camera
+                this.camera.position.set(0, 0, 12);
+                this.camera.lookAt(0, 0, 0);
+                
+                // Start animation
+                this.animate();
+            }
+
+            setupControls() {
+                this.mouse = { x: 0, y: 0, down: false };
+                this.zoom = 1;
+                this.pan = { x: 0, y: 0 };
+
+                this.renderer.domElement.addEventListener('mousedown', (e) => {
+                    this.mouse.down = true;
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+
+                this.renderer.domElement.addEventListener('mousemove', (e) => {
+                    if (this.mouse.down) {
+                        const deltaX = e.clientX - this.mouse.x;
+                        const deltaY = e.clientY - this.mouse.y;
+                        
+                        this.pan.x += deltaX * 0.01;
+                        this.pan.y -= deltaY * 0.01;
+                        
+                        this.mouse.x = e.clientX;
+                        this.mouse.y = e.clientY;
+                    }
+                });
+
+                this.renderer.domElement.addEventListener('mouseup', () => {
+                    this.mouse.down = false;
+                });
+
+                this.renderer.domElement.addEventListener('wheel', (e) => {
+                    this.zoom *= (1 - e.deltaY * 0.001);
+                    this.zoom = Math.max(0.5, Math.min(3, this.zoom));
+                    e.preventDefault();
+                });
+            }
+
+            createCircle() {
+                const geometry = new THREE.RingGeometry(this.amplitude - 0.02, this.amplitude + 0.02, 64);
+                const material = new THREE.MeshBasicMaterial({ color: 0x666666 });
+                this.circle = new THREE.Mesh(geometry, material);
+                this.scene.add(this.circle);
+            }
+
+            createAxes() {
+                const axisGroup = new THREE.Group();
+                
+                // X and Y axes for circle
+                const axisGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(-4, 0, 0),
+                    new THREE.Vector3(12, 0, 0)
+                ]);
+                const xAxis = new THREE.Line(axisGeometry, new THREE.LineBasicMaterial({ color: 0x444444 }));
+                axisGroup.add(xAxis);
+
+                const yAxisGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, -4, 0),
+                    new THREE.Vector3(0, 4, 0)
+                ]);
+                const yAxis = new THREE.Line(yAxisGeometry, new THREE.LineBasicMaterial({ color: 0x444444 }));
+                axisGroup.add(yAxis);
+
+                // Vertical wave axis (right side)
+                const waveAxisGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(4, -4, 0),
+                    new THREE.Vector3(4, 4, 0)
+                ]);
+                const waveAxis = new THREE.Line(waveAxisGeometry, new THREE.LineBasicMaterial({ color: 0x444444 }));
+                axisGroup.add(waveAxis);
+
+                // Horizontal wave axis (bottom)
+                const hWaveAxisGeometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(-4, -4, 0),
+                    new THREE.Vector3(4, -4, 0)
+                ]);
+                const hWaveAxis = new THREE.Line(hWaveAxisGeometry, new THREE.LineBasicMaterial({ color: 0x444444 }));
+                axisGroup.add(hWaveAxis);
+
+                // Grid lines for vertical wave
+                for (let i = 1; i <= this.waveLength; i++) {
+                    const gridGeometry = new THREE.BufferGeometry().setFromPoints([
+                        new THREE.Vector3(4 + i * Math.PI, -0.1, 0),
+                        new THREE.Vector3(4 + i * Math.PI, 0.1, 0)
+                    ]);
+                    const gridLine = new THREE.Line(gridGeometry, new THREE.LineBasicMaterial({ color: 0x333333 }));
+                    axisGroup.add(gridLine);
+                }
+
+                // Grid lines for horizontal wave
+                for (let i = 1; i <= this.waveLength; i++) {
+                    const hGridGeometry = new THREE.BufferGeometry().setFromPoints([
+                        new THREE.Vector3(-0.1, -4 - i * Math.PI, 0),
+                        new THREE.Vector3(0.1, -4 - i * Math.PI, 0)
+                    ]);
+                    const hGridLine = new THREE.Line(hGridGeometry, new THREE.LineBasicMaterial({ color: 0x333333 }));
+                    axisGroup.add(hGridLine);
+                }
+
+                this.scene.add(axisGroup);
+            }
+
+            createWaves() {
+                this.sineWavePoints = [];
+                this.cosineWavePoints = [];
+                this.horizontalWavePoints = [];
+                
+                // Create vertical sine wave (y projection - right side)
+                this.sineWaveGeometry = new THREE.BufferGeometry();
+                this.sineWaveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 2 });
+                this.sineWave = new THREE.Line(this.sineWaveGeometry, this.sineWaveMaterial);
+                this.scene.add(this.sineWave);
+
+                // Create vertical cosine wave (x projection - right side) - initially hidden
+                this.cosineWaveGeometry = new THREE.BufferGeometry();
+                this.cosineWaveMaterial = new THREE.LineBasicMaterial({ color: 0x0088ff, linewidth: 2 });
+                this.cosineWave = new THREE.Line(this.cosineWaveGeometry, this.cosineWaveMaterial);
+                this.cosineWave.visible = false;
+                this.scene.add(this.cosineWave);
+
+                // Create horizontal sine wave (y projection - bottom)
+                this.horizontalWaveGeometry = new THREE.BufferGeometry();
+                this.horizontalWaveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 2 });
+                this.horizontalWave = new THREE.Line(this.horizontalWaveGeometry, this.horizontalWaveMaterial);
+                this.scene.add(this.horizontalWave);
+            }
+
+            createMovingPoint() {
+                const geometry = new THREE.SphereGeometry(0.08, 16, 16);
+                const material = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+                this.movingPoint = new THREE.Mesh(geometry, material);
+                this.scene.add(this.movingPoint);
+            }
+
+            createProjectionLines() {
+                // Vertical projection line (to vertical sine wave)
+                this.vProjectionGeometry = new THREE.BufferGeometry();
+                this.vProjectionMaterial = new THREE.LineBasicMaterial({ 
+                    color: 0x00ff00, 
+                    opacity: 0.6, 
+                    transparent: true,
+                    linewidth: 1
+                });
+                this.vProjectionLine = new THREE.Line(this.vProjectionGeometry, this.vProjectionMaterial);
+                this.scene.add(this.vProjectionLine);
+
+                // Horizontal projection line (to vertical cosine wave)
+                this.hProjectionGeometry = new THREE.BufferGeometry();
+                this.hProjectionMaterial = new THREE.LineBasicMaterial({ 
+                    color: 0x0088ff, 
+                    opacity: 0.6, 
+                    transparent: true,
+                    linewidth: 1
+                });
+                this.hProjectionLine = new THREE.Line(this.hProjectionGeometry, this.hProjectionMaterial);
+                this.hProjectionLine.visible = false;
+                this.scene.add(this.hProjectionLine);
+
+                // Horizontal projection line (to horizontal sine wave)
+                this.bottomProjectionGeometry = new THREE.BufferGeometry();
+                this.bottomProjectionMaterial = new THREE.LineBasicMaterial({ 
+                    color: 0x00ff00, 
+                    opacity: 0.6, 
+                    transparent: true,
+                    linewidth: 1
+                });
+                this.bottomProjectionLine = new THREE.Line(this.bottomProjectionGeometry, this.bottomProjectionMaterial);
+                this.scene.add(this.bottomProjectionLine);
+            }
+
+            updateWaves() {
+                const waveStart = 4;
+                const waveWidth = this.waveLength * Math.PI; // Total width of wave display
+                const resolution = 3; // Points per unit
+                const maxPoints = Math.ceil(waveWidth * resolution);
+                
+                // Current position
+                const currentX = this.amplitude * Math.cos(this.time);
+                const currentY = this.amplitude * Math.sin(this.time);
+                
+                // Generate complete sine and cosine waves that stay near the circle
+                this.sineWavePoints = [];
+                this.cosineWavePoints = [];
+                this.horizontalWavePoints = [];
+                
+                // Create vertical waves from current time backwards to show history
+                const timeStart = this.time - waveWidth;
+                const timeEnd = this.time;
+                
+                for (let t = timeStart; t <= timeEnd; t += 1/resolution) {
+                    // Vertical waves (right side)
+                    const waveX = waveStart + (t - timeStart);
+                    const sineY = this.amplitude * Math.sin(t);
+                    const cosineY = this.amplitude * Math.cos(t);
+                    
+                    this.sineWavePoints.push(new THREE.Vector3(waveX, sineY, 0));
+                    this.cosineWavePoints.push(new THREE.Vector3(waveX, cosineY, 0));
+                    
+                    // Horizontal wave (bottom) - y coordinate over time
+                    const hWaveY = -4 - (t - timeStart);
+                    const hSineX = this.amplitude * Math.sin(t);
+                    
+                    this.horizontalWavePoints.push(new THREE.Vector3(hSineX, hWaveY, 0));
+                }
+                
+                // Update geometries
+                this.sineWaveGeometry.setFromPoints(this.sineWavePoints);
+                this.cosineWaveGeometry.setFromPoints(this.cosineWavePoints);
+                this.horizontalWaveGeometry.setFromPoints(this.horizontalWavePoints);
+            }
+
+            updateMovingPoint() {
+                const x = this.amplitude * Math.cos(this.time);
+                const y = this.amplitude * Math.sin(this.time);
+                this.movingPoint.position.set(x, y, 0);
+
+                // Update projection lines to current wave positions
+                const waveStart = 4;
+                const waveWidth = this.waveLength * Math.PI;
+                const currentVerticalWaveX = waveStart + waveWidth; // End of vertical wave
+                const currentHorizontalWaveY = -4 - waveWidth; // End of horizontal wave
+                
+                // Vertical projection to right-side sine wave
+                this.vProjectionGeometry.setFromPoints([
+                    new THREE.Vector3(x, y, 0),
+                    new THREE.Vector3(currentVerticalWaveX, y, 0)
+                ]);
+
+                // Horizontal projection to right-side cosine wave
+                this.hProjectionGeometry.setFromPoints([
+                    new THREE.Vector3(x, y, 0),
+                    new THREE.Vector3(currentVerticalWaveX, x, 0)
+                ]);
+
+                // Vertical projection to bottom sine wave
+                this.bottomProjectionGeometry.setFromPoints([
+                    new THREE.Vector3(x, y, 0),
+                    new THREE.Vector3(x, currentHorizontalWaveY, 0)
+                ]);
+            }
+
+            setupUI() {
+                // Omega control
+                const omegaSlider = document.getElementById('omega');
+                const omegaValue = document.getElementById('omegaValue');
+                omegaSlider.addEventListener('input', (e) => {
+                    this.omega = parseFloat(e.target.value);
+                    omegaValue.textContent = `${this.omega.toFixed(1)} rad/s`;
+                });
+
+                // Amplitude control
+                const amplitudeSlider = document.getElementById('amplitude');
+                const amplitudeValue = document.getElementById('amplitudeValue');
+                amplitudeSlider.addEventListener('input', (e) => {
+                    this.amplitude = parseFloat(e.target.value);
+                    amplitudeValue.textContent = `${this.amplitude.toFixed(1)} units`;
+                    this.updateCircle();
+                });
+
+                // Wave length control
+                const waveLengthSlider = document.getElementById('waveLength');
+                const waveLengthValue = document.getElementById('waveLengthValue');
+                waveLengthSlider.addEventListener('input', (e) => {
+                    this.waveLength = parseFloat(e.target.value);
+                    waveLengthValue.textContent = `${this.waveLength.toFixed(1)}π`;
+                });
+
+                // Play/Pause button
+                const playPauseBtn = document.getElementById('playPause');
+                playPauseBtn.addEventListener('click', () => {
+                    this.isPlaying = !this.isPlaying;
+                    playPauseBtn.textContent = this.isPlaying ? 'Pause' : 'Play';
+                    playPauseBtn.className = this.isPlaying ? '' : 'paused';
+                });
+
+                // Reset button
+                document.getElementById('reset').addEventListener('click', () => {
+                    this.time = 0;
+                    this.pan = { x: 0, y: 0 };
+                    this.zoom = 1;
+                });
+
+                // Show both waves button
+                const showBothBtn = document.getElementById('showBoth');
+                showBothBtn.addEventListener('click', () => {
+                    this.showBothWaves = !this.showBothWaves;
+                    this.cosineWave.visible = this.showBothWaves;
+                    this.hProjectionLine.visible = this.showBothWaves;
+                    showBothBtn.textContent = this.showBothWaves ? 'Show Sine Only' : 'Show Both Waves';
+                });
+            }
+
+            updateCircle() {
+                this.scene.remove(this.circle);
+                const geometry = new THREE.RingGeometry(this.amplitude - 0.02, this.amplitude + 0.02, 64);
+                const material = new THREE.MeshBasicMaterial({ color: 0x666666 });
+                this.circle = new THREE.Mesh(geometry, material);
+                this.scene.add(this.circle);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                if (this.isPlaying) {
+                    this.time += this.omega * 0.016; // Assuming 60fps
+                }
+
+                this.updateWaves();
+                this.updateMovingPoint();
+
+                // Apply camera transformations
+                this.camera.position.x = this.pan.x;
+                this.camera.position.y = this.pan.y;
+                this.camera.position.z = 12 / this.zoom;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.visualizer) {
+                window.visualizer.camera.aspect = window.innerWidth / window.innerHeight;
+                window.visualizer.camera.updateProjectionMatrix();
+                window.visualizer.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        // Initialize the visualizer
+        window.visualizer = new SHMVisualizer();
+    </script>
+</body>
+</html>

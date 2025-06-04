@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring-Mass System Simulation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #canvas {
+            display: block;
+        }
+        
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 2px solid #00ff00;
+            min-width: 300px;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #00ff00;
+        }
+        
+        .formula {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        
+        .value {
+            color: #00ffff;
+        }
+        
+        button {
+            background: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        input[type="range"] {
+            width: 100px;
+            margin: 0 10px;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div id="info-panel">
+            <div class="section">
+                <h3>System Parameters</h3>
+                <div><span class="formula">Mass (m):</span> <span class="value" id="mass-val">1.0 kg</span></div>
+                <div><span class="formula">Spring Constant (k):</span> <span class="value" id="k-val">10.0 N/m</span></div>
+                <div><span class="formula">Damping (γ):</span> <span class="value" id="damping-val">0.1 kg/s</span></div>
+            </div>
+            
+            <div class="section">
+                <h3>Key Formulas</h3>
+                <div><span class="formula">ω₀ = √(k/m)</span></div>
+                <div><span class="formula">F = -kx - γv</span></div>
+                <div><span class="formula">a = F/m</span></div>
+                <div><span class="formula">T = 2π/ω₀</span></div>
+            </div>
+            
+            <div class="section">
+                <h3>Current Values</h3>
+                <div><span class="formula">Time (t):</span> <span class="value" id="time-val">0.0 s</span></div>
+                <div><span class="formula">Position (x):</span> <span class="value" id="pos-val">0.0 m</span></div>
+                <div><span class="formula">Velocity (v):</span> <span class="value" id="vel-val">0.0 m/s</span></div>
+                <div><span class="formula">Acceleration (a):</span> <span class="value" id="acc-val">0.0 m/s²</span></div>
+                <div><span class="formula">Force (F):</span> <span class="value" id="force-val">0.0 N</span></div>
+                <div><span class="formula">Energy (E):</span> <span class="value" id="energy-val">0.0 J</span></div>
+            </div>
+            
+            <div class="section">
+                <h3>Calculated Properties</h3>
+                <div><span class="formula">Natural Freq (ω₀):</span> <span class="value" id="omega-val">3.16 rad/s</span></div>
+                <div><span class="formula">Period (T):</span> <span class="value" id="period-val">1.99 s</span></div>
+                <div><span class="formula">Amplitude (A):</span> <span class="value" id="amp-val">2.0 m</span></div>
+            </div>
+        </div>
+        
+        <div id="controls">
+            <h3>Controls</h3>
+            <div>
+                <label>Mass: <input type="range" id="mass-slider" min="0.5" max="5" step="0.1" value="1">
+                <span id="mass-display">1.0</span> kg</label>
+            </div>
+            <div>
+                <label>Spring K: <input type="range" id="k-slider" min="1" max="50" step="1" value="10">
+                <span id="k-display">10</span> N/m</label>
+            </div>
+            <div>
+                <label>Damping: <input type="range" id="damping-slider" min="0" max="1" step="0.01" value="0.1">
+                <span id="damping-display">0.1</span> kg/s</label>
+            </div>
+            <div>
+                <label>Amplitude: <input type="range" id="amp-slider" min="0.5" max="4" step="0.1" value="2">
+                <span id="amp-display">2.0</span> m</label>
+            </div>
+            <br>
+            <button id="play-pause">Pause</button>
+            <button id="reset">Reset</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x222222);
+        
+        // Simple orbit controls implementation
+        let isMouseDown = false;
+        let mouseX = 0, mouseY = 0;
+        let targetRotationX = 0, targetRotationY = 0;
+        let rotationX = 0, rotationY = 0;
+        let cameraDistance = 15;
+        
+        const canvas = renderer.domElement;
+        
+        canvas.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (isMouseDown) {
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                targetRotationY += deltaX * 0.01;
+                targetRotationX += deltaY * 0.01;
+                targetRotationX = Math.max(-Math.PI/2, Math.min(Math.PI/2, targetRotationX));
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+        });
+        
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            cameraDistance += e.deltaY * 0.01;
+            cameraDistance = Math.max(5, Math.min(50, cameraDistance));
+        });
+        
+        // Physics variables
+        let mass = 1.0;
+        let springConstant = 10.0;
+        let damping = 0.1;
+        let amplitude = 2.0;
+        
+        let time = 0;
+        let position = 2.0; // Start at amplitude
+        let velocity = 0;
+        let isPlaying = true;
+        
+        // Create scene objects
+        const springGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.1, 8);
+        const springMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
+        
+        // Create spring coils
+        const springCoils = [];
+        for (let i = 0; i < 20; i++) {
+            const coil = new THREE.Mesh(springGeometry, springMaterial);
+            springCoils.push(coil);
+            scene.add(coil);
+        }
+        
+        // Create mass
+        const massGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const massMaterial = new THREE.MeshBasicMaterial({ color: 0x00aaff });
+        const massMesh = new THREE.Mesh(massGeometry, massMaterial);
+        scene.add(massMesh);
+        
+        // Create wall
+        const wallGeometry = new THREE.PlaneGeometry(4, 4);
+        const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
+        const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+        wallMesh.position.set(-6, 0, 0);
+        wallMesh.rotation.y = Math.PI / 2;
+        scene.add(wallMesh);
+        
+        // Create axes
+        const createAxis = (color, direction, length) => {
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(direction.x * length, direction.y * length, direction.z * length)
+            ]);
+            const material = new THREE.LineBasicMaterial({ color });
+            return new THREE.Line(geometry, material);
+        };
+        
+        const xAxis = createAxis(0xff0000, new THREE.Vector3(1, 0, 0), 8);
+        const yAxis = createAxis(0x00ff00, new THREE.Vector3(0, 1, 0), 8);
+        const zAxis = createAxis(0x0000ff, new THREE.Vector3(0, 0, 1), 8);
+        scene.add(xAxis);
+        scene.add(yAxis);
+        scene.add(zAxis);
+        
+        // Create trajectory line
+        const trajectoryPoints = [];
+        const trajectoryGeometry = new THREE.BufferGeometry();
+        const trajectoryMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 });
+        const trajectoryLine = new THREE.Line(trajectoryGeometry, trajectoryMaterial);
+        scene.add(trajectoryLine);
+        
+        // UI Elements
+        const massSlider = document.getElementById('mass-slider');
+        const kSlider = document.getElementById('k-slider');
+        const dampingSlider = document.getElementById('damping-slider');
+        const ampSlider = document.getElementById('amp-slider');
+        const playPauseBtn = document.getElementById('play-pause');
+        const resetBtn = document.getElementById('reset');
+        
+        // Event listeners
+        massSlider.addEventListener('input', (e) => {
+            mass = parseFloat(e.target.value);
+            document.getElementById('mass-display').textContent = mass.toFixed(1);
+            updateCalculatedValues();
+        });
+        
+        kSlider.addEventListener('input', (e) => {
+            springConstant = parseFloat(e.target.value);
+            document.getElementById('k-display').textContent = springConstant;
+            updateCalculatedValues();
+        });
+        
+        dampingSlider.addEventListener('input', (e) => {
+            damping = parseFloat(e.target.value);
+            document.getElementById('damping-display').textContent = damping.toFixed(2);
+            updateCalculatedValues();
+        });
+        
+        ampSlider.addEventListener('input', (e) => {
+            amplitude = parseFloat(e.target.value);
+            document.getElementById('amp-display').textContent = amplitude.toFixed(1);
+        });
+        
+        playPauseBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playPauseBtn.textContent = isPlaying ? 'Pause' : 'Play';
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            time = 0;
+            position = amplitude;
+            velocity = 0;
+            trajectoryPoints.length = 0;
+        });
+        
+        function updateCalculatedValues() {
+            const omega0 = Math.sqrt(springConstant / mass);
+            const period = 2 * Math.PI / omega0;
+            
+            document.getElementById('omega-val').textContent = omega0.toFixed(2) + ' rad/s';
+            document.getElementById('period-val').textContent = period.toFixed(2) + ' s';
+        }
+        
+        function updateUI() {
+            const omega0 = Math.sqrt(springConstant / mass);
+            const force = -springConstant * position - damping * velocity;
+            const acceleration = force / mass;
+            const kineticEnergy = 0.5 * mass * velocity * velocity;
+            const potentialEnergy = 0.5 * springConstant * position * position;
+            const totalEnergy = kineticEnergy + potentialEnergy;
+            
+            document.getElementById('mass-val').textContent = mass.toFixed(1) + ' kg';
+            document.getElementById('k-val').textContent = springConstant.toFixed(1) + ' N/m';
+            document.getElementById('damping-val').textContent = damping.toFixed(2) + ' kg/s';
+            document.getElementById('time-val').textContent = time.toFixed(2) + ' s';
+            document.getElementById('pos-val').textContent = position.toFixed(3) + ' m';
+            document.getElementById('vel-val').textContent = velocity.toFixed(3) + ' m/s';
+            document.getElementById('acc-val').textContent = acceleration.toFixed(3) + ' m/s²';
+            document.getElementById('force-val').textContent = force.toFixed(3) + ' N';
+            document.getElementById('energy-val').textContent = totalEnergy.toFixed(3) + ' J';
+            document.getElementById('amp-val').textContent = amplitude.toFixed(1) + ' m';
+        }
+        
+        function updateSpring() {
+            const restLength = 4;
+            const currentLength = restLength + position;
+            const coilSpacing = Math.max(0.1, currentLength / springCoils.length);
+            
+            springCoils.forEach((coil, i) => {
+                const x = -6 + (i + 1) * coilSpacing;
+                coil.position.set(x, 0, 0);
+                
+                // Visual compression/extension effect
+                const compressionFactor = currentLength / restLength;
+                coil.scale.y = Math.max(0.5, compressionFactor);
+                
+                // Color coding for compression/extension
+                const hue = position > 0 ? 0.1 : 0.6; // Orange for extension, blue for compression
+                coil.material.color.setHSL(hue, 0.8, 0.5);
+            });
+        }
+        
+        function physics(dt) {
+            if (!isPlaying) return;
+            
+            // Calculate force: F = -kx - γv
+            const springForce = -springConstant * position;
+            const dampingForce = -damping * velocity;
+            const totalForce = springForce + dampingForce;
+            
+            // Calculate acceleration: a = F/m
+            const acceleration = totalForce / mass;
+            
+            // Update velocity and position using Verlet integration
+            velocity += acceleration * dt;
+            position += velocity * dt;
+            
+            time += dt;
+            
+            // Add to trajectory
+            if (trajectoryPoints.length > 500) {
+                trajectoryPoints.shift();
+            }
+            trajectoryPoints.push(new THREE.Vector3(position, 0, 0));
+            
+            // Update trajectory line
+            trajectoryGeometry.setFromPoints(trajectoryPoints);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const dt = 0.016; // ~60 FPS
+            physics(dt);
+            
+            // Update camera position
+            rotationX += (targetRotationX - rotationX) * 0.1;
+            rotationY += (targetRotationY - rotationY) * 0.1;
+            
+            camera.position.x = cameraDistance * Math.sin(rotationY) * Math.cos(rotationX);
+            camera.position.y = cameraDistance * Math.sin(rotationX);
+            camera.position.z = cameraDistance * Math.cos(rotationY) * Math.cos(rotationX);
+            camera.lookAt(0, 0, 0);
+            
+            // Update mass position
+            massMesh.position.x = position;
+            
+            // Update spring
+            updateSpring();
+            
+            // Update UI
+            updateUI();
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Initial setup
+        camera.position.set(10, 5, 10);
+        camera.lookAt(0, 0, 0);
+        updateCalculatedValues();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torsional Pendulum Simulation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            z-index: 100;
+            min-width: 280px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-left: 10px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            z-index: 100;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .formula {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .value {
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="controls">
+            <h3>Torsional Pendulum Controls</h3>
+            
+            <div class="control-group">
+                <label>Initial Angle (θ₀): <span id="angleValue">30</span>°</label>
+                <input type="range" id="initialAngle" min="0" max="90" value="30">
+            </div>
+            
+            <div class="control-group">
+                <label>Torsion Constant (κ): <span id="torsionValue">1.0</span> N⋅m/rad</label>
+                <input type="range" id="torsionConstant" min="0.1" max="5.0" step="0.1" value="1.0">
+            </div>
+            
+            <div class="control-group">
+                <label>Moment of Inertia (I): <span id="inertiaValue">0.5</span> kg⋅m²</label>
+                <input type="range" id="momentInertia" min="0.1" max="2.0" step="0.1" value="0.5">
+            </div>
+            
+            <div class="control-group">
+                <label>Damping (γ): <span id="dampingValue">0.1</span></label>
+                <input type="range" id="damping" min="0" max="1" step="0.05" value="0.1">
+            </div>
+            
+            <button onclick="startSimulation()">Start</button>
+            <button onclick="stopSimulation()">Stop</button>
+            <button onclick="resetSimulation()">Reset</button>
+        </div>
+        
+        <div id="info">
+            <h3>Simple Harmonic Motion</h3>
+            <div class="formula">
+                <strong>Equation of Motion:</strong><br>
+                I⋅α = -κ⋅θ - γ⋅ω<br>
+                <strong>Angular Frequency:</strong><br>
+                ω₀ = √(κ/I) = <span class="value" id="frequency">1.41</span> rad/s<br>
+                <strong>Period:</strong><br>
+                T = 2π/ω₀ = <span class="value" id="period">4.44</span> s
+            </div>
+            
+            <div>
+                <strong>Current Values:</strong><br>
+                Angle: <span class="value" id="currentAngle">0.0</span>°<br>
+                Angular Velocity: <span class="value" id="currentVelocity">0.0</span> rad/s<br>
+                Time: <span class="value" id="currentTime">0.0</span> s
+            </div>
+        </div>
+        
+        <div id="instructions">
+            <strong>Controls:</strong><br>
+            • Mouse: Rotate view<br>
+            • Scroll: Zoom in/out<br>
+            • Right-click + drag: Pan
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, controls;
+        let disc, fiber, support, base;
+        let isRunning = false;
+        let animationId;
+        let time = 0;
+        let currentAngle = 0;
+        let angularVelocity = 0;
+        
+        // Physics parameters
+        let initialAngle = 30 * Math.PI / 180; // Convert to radians
+        let torsionConstant = 1.0;
+        let momentOfInertia = 0.5;
+        let dampingCoeff = 0.1;
+        
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 0, 0);
+            
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+            
+            // Create torsional pendulum components
+            createPendulum();
+            
+            // Mouse controls
+            setupControls();
+            
+            // Event listeners
+            setupEventListeners();
+            
+            // Start render loop
+            animate();
+        }
+        
+        function createPendulum() {
+            // Base
+            const baseGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.2, 32);
+            const baseMaterial = new THREE.MeshLambertMaterial({ color: 0x666666 });
+            base = new THREE.Mesh(baseGeometry, baseMaterial);
+            base.position.y = -3;
+            base.receiveShadow = true;
+            scene.add(base);
+            
+            // Support column
+            const supportGeometry = new THREE.CylinderGeometry(0.1, 0.1, 4, 16);
+            const supportMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+            support = new THREE.Mesh(supportGeometry, supportMaterial);
+            support.position.y = -1;
+            support.castShadow = true;
+            scene.add(support);
+            
+            // Horizontal support arm
+            const armGeometry = new THREE.CylinderGeometry(0.05, 0.05, 2, 16);
+            const armMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+            const arm = new THREE.Mesh(armGeometry, armMaterial);
+            arm.rotation.z = Math.PI / 2;
+            arm.position.set(1, 1, 0);
+            scene.add(arm);
+            
+            // Fiber (torsion wire)
+            const fiberGeometry = new THREE.CylinderGeometry(0.01, 0.01, 2, 8);
+            const fiberMaterial = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+            fiber = new THREE.Mesh(fiberGeometry, fiberMaterial);
+            fiber.position.set(2, 0, 0);
+            scene.add(fiber);
+            
+            // Disc
+            const discGeometry = new THREE.CylinderGeometry(0.8, 0.8, 0.1, 32);
+            const discMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x4fc3f7,
+                transparent: true,
+                opacity: 0.8
+            });
+            disc = new THREE.Mesh(discGeometry, discMaterial);
+            disc.position.set(2, -1, 0);
+            disc.castShadow = true;
+            disc.receiveShadow = true;
+            
+            // Add arrow to show rotation
+            const arrowGeometry = new THREE.ConeGeometry(0.1, 0.3, 8);
+            const arrowMaterial = new THREE.MeshLambertMaterial({ color: 0xff6b6b });
+            const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+            arrow.position.set(0.6, 0.1, 0);
+            arrow.rotation.z = -Math.PI / 2;
+            disc.add(arrow);
+            
+            scene.add(disc);
+        }
+        
+        function setupControls() {
+            // Simple mouse controls for orbit
+            let mouseDown = false;
+            let mouseButton = 0;
+            let mouseX = 0;
+            let mouseY = 0;
+            let cameraDistance = 8;
+            let cameraTheta = 0;
+            let cameraPhi = Math.PI / 4;
+            let panX = 0;
+            let panY = 0;
+            
+            renderer.domElement.addEventListener('mousedown', (event) => {
+                mouseDown = true;
+                mouseButton = event.button;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            renderer.domElement.addEventListener('mouseup', () => {
+                mouseDown = false;
+            });
+            
+            renderer.domElement.addEventListener('mousemove', (event) => {
+                if (!mouseDown) return;
+                
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+                
+                if (mouseButton === 0) { // Left mouse - rotate
+                    cameraTheta -= deltaX * 0.01;
+                    cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi + deltaY * 0.01));
+                } else if (mouseButton === 2) { // Right mouse - pan
+                    panX -= deltaX * 0.01;
+                    panY += deltaY * 0.01;
+                }
+                
+                updateCamera();
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            renderer.domElement.addEventListener('wheel', (event) => {
+                cameraDistance += event.deltaY * 0.01;
+                cameraDistance = Math.max(2, Math.min(20, cameraDistance));
+                updateCamera();
+            });
+            
+            renderer.domElement.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+            });
+            
+            function updateCamera() {
+                camera.position.x = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta) + panX;
+                camera.position.y = cameraDistance * Math.cos(cameraPhi) + panY;
+                camera.position.z = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+                camera.lookAt(panX, panY, 0);
+            }
+            
+            updateCamera();
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('initialAngle').addEventListener('input', (e) => {
+                document.getElementById('angleValue').textContent = e.target.value;
+                initialAngle = parseFloat(e.target.value) * Math.PI / 180;
+                updateCalculations();
+            });
+            
+            document.getElementById('torsionConstant').addEventListener('input', (e) => {
+                document.getElementById('torsionValue').textContent = e.target.value;
+                torsionConstant = parseFloat(e.target.value);
+                updateCalculations();
+            });
+            
+            document.getElementById('momentInertia').addEventListener('input', (e) => {
+                document.getElementById('inertiaValue').textContent = e.target.value;
+                momentOfInertia = parseFloat(e.target.value);
+                updateCalculations();
+            });
+            
+            document.getElementById('damping').addEventListener('input', (e) => {
+                document.getElementById('dampingValue').textContent = e.target.value;
+                dampingCoeff = parseFloat(e.target.value);
+                updateCalculations();
+            });
+            
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        function updateCalculations() {
+            const omega0 = Math.sqrt(torsionConstant / momentOfInertia);
+            const period = 2 * Math.PI / omega0;
+            
+            document.getElementById('frequency').textContent = omega0.toFixed(2);
+            document.getElementById('period').textContent = period.toFixed(2);
+        }
+        
+        function startSimulation() {
+            if (!isRunning) {
+                isRunning = true;
+                currentAngle = initialAngle;
+                angularVelocity = 0;
+                time = 0;
+            }
+        }
+        
+        function stopSimulation() {
+            isRunning = false;
+        }
+        
+        function resetSimulation() {
+            isRunning = false;
+            time = 0;
+            currentAngle = 0;
+            angularVelocity = 0;
+            disc.rotation.y = 0;
+            updateDisplay();
+        }
+        
+        function updatePhysics(dt) {
+            if (!isRunning) return;
+            
+            // Equation of motion: I⋅α = -κ⋅θ - γ⋅ω
+            const angularAcceleration = (-torsionConstant * currentAngle - dampingCoeff * angularVelocity) / momentOfInertia;
+            
+            // Euler integration
+            angularVelocity += angularAcceleration * dt;
+            currentAngle += angularVelocity * dt;
+            
+            time += dt;
+            
+            // Update disc rotation
+            disc.rotation.y = currentAngle;
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            document.getElementById('currentAngle').textContent = (currentAngle * 180 / Math.PI).toFixed(1);
+            document.getElementById('currentVelocity').textContent = angularVelocity.toFixed(2);
+            document.getElementById('currentTime').textContent = time.toFixed(1);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            updatePhysics(0.016); // ~60 FPS
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Initialize the simulation
+        init();
+        updateCalculations();
+    </script>
+</body>
+</html>
